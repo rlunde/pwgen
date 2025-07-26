@@ -55,15 +55,16 @@ With different settings, you might get:
 
 ⚠️ **Important Disclaimers:**
 
-- **For casual use only**: This tool is designed for WiFi passwords, mobile apps, and other non-critical applications
+- **For casual use only**: This tool is designed for guest WiFi passwords, non-critical mobile apps, and other non-critical applications
 - **Not cryptographically secure**: Uses JavaScript's `Math.random()` which is not suitable for high-security applications
 - **No guarantees**: This is a personal project without formal security review
+- **Demonstration only**: Not suitable for production use! Even if you decide to use this yourself for your own stuff, **CHANGE THE WORDLIST**. I don't use this myself, for obvious reasons.
 - **Local only**: Runs entirely in your browser - no passwords are sent anywhere
 
 **For important accounts** (banking, email, etc.), use:
 - A proper password manager (1Password, Bitwarden, etc.)
 - Hardware security keys where possible
-- Two-factor authentication always
+- Two-factor authentication ***always***
 
 ## Technical Details
 

@@ -1,514 +1,1501 @@
 <!DOCTYPE html>
-<html>
-
-<head lang="en">
-    <meta charset="UTF-8">
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>XKCD Password Generator</title>
     <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Oxygen, Ubuntu, Cantarell, sans-serif;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        background-color: #f8f9fa;
+        line-height: 1.6;
+        color: #333;
+      }
+
+      .container {
+        background: white;
+        padding: 40px;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+      }
+
+      h1 {
+        color: #2c3e50;
+        margin-bottom: 10px;
+        font-size: 2.5rem;
+      }
+
+      h2 {
+        color: #34495e;
+        margin-top: 30px;
+        margin-bottom: 15px;
+        font-size: 1.5rem;
+      }
+
+      .subtitle {
+        color: #666;
+        font-size: 1.1rem;
+        margin-bottom: 20px;
+      }
+
+      .intro-text {
+        background: #e8f4f8;
+        padding: 20px;
+        border-radius: 8px;
+        margin: 20px 0;
+        border-left: 4px solid #3498db;
+      }
+
+      .security-notes {
+        background: #fff3cd;
+        border: 1px solid #ffeaa7;
+        padding: 15px;
+        border-radius: 6px;
+        margin: 20px 0;
+      }
+
+      .security-notes h3 {
+        margin-top: 0;
+        color: #856404;
+      }
+
+      .security-notes p {
+        margin-bottom: 0;
+        color: #856404;
+      }
+
+      /* XKCD Password Generator Styles */
+      .pwgen-container {
+        margin: 30px 0;
+      }
+
+      .controls {
+        margin-bottom: 20px;
+        padding: 20px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        border: 1px solid #e9ecef;
+      }
+
+      .control-group {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 15px;
+        width: 100%;
+      }
+
+      .control-group:last-child {
+        margin-bottom: 20px;
+      }
+
+      .control-group label {
+        margin-bottom: 0;
+        margin-right: 15px;
+        font-weight: 600;
+        color: #495057;
+        font-size: 14px;
+        flex: 1;
+      }
+
+      .control-group.dropdown-group label {
+        flex: none;
+        margin-right: 15px;
+      }
+
+      .control-group.checkbox-group {
+        justify-content: flex-start;
+      }
+
+      .control-group.dropdown-group {
+        justify-content: flex-start;
+        gap: 15px;
+      }
+
+      .control-group.indented,
+      .separator-options,
+      .terminator-options {
+        margin-left: 25px;
+      }
+
+      .separator-options,
+      .terminator-options {
+        border-left: 3px solid #007cba;
+        padding-left: 15px;
+        margin-top: 10px;
+        margin-bottom: 15px;
+      }
+
+      .separator-options .control-group,
+      .terminator-options .control-group {
+        margin-bottom: 8px;
+      }
+
+      .separator-options .control-group:last-child,
+      .terminator-options .control-group:last-child {
+        margin-bottom: 0;
+      }
+
+      .control-group.dropdown-group select {
+        flex-shrink: 0;
+      }
+
+      .control-group input[type="checkbox"] {
+        margin-right: 8px;
+        margin-left: 0;
+        flex-shrink: 0;
+      }
+
+      .control-group input[type="checkbox"] + label {
+        display: flex;
+        align-items: center;
+        margin-left: 0;
+        margin-right: 0;
+        font-weight: normal;
+        flex: 1;
+      }
+
+      .control-group select {
+        padding: 8px 12px;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        background-color: white;
+        font-size: 14px;
+        min-width: 140px;
+        flex-shrink: 0;
+      }
+
+      .password-list {
+        margin-top: 20px;
+      }
+
+      .password-item {
+        display: flex;
+        align-items: center;
+        margin: 12px 0;
+        padding: 15px;
+        background: #ffffff;
+        border-radius: 8px;
+        border: 1px solid #e9ecef;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        transition: box-shadow 0.2s ease;
+      }
+
+      .password-item:hover {
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .password-text {
+        flex-grow: 1;
+        font-family: "Monaco", "Menlo", "Ubuntu Mono", "Courier New", monospace;
+        font-size: 16px;
+        font-weight: 600;
+        color: #2c3e50;
+        word-break: break-all;
+        padding: 5px 0;
+      }
+
+      .copy-btn {
+        background: #007cba;
+        color: white;
+        border: none;
+        padding: 10px 18px;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-left: 15px;
+        font-size: 14px;
+        font-weight: 500;
+        transition: background-color 0.2s ease;
+        white-space: nowrap;
+      }
+
+      .copy-btn:hover {
+        background: #005a87;
+      }
+
+      .copy-btn.copied {
+        background: #28a745;
+      }
+
+      .copy-btn:disabled {
+        background: #6c757d;
+        cursor: not-allowed;
+      }
+
+      .generate-btn {
+        background: #28a745;
+        color: white;
+        border: none;
+        padding: 12px 25px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 16px;
+        font-weight: 600;
+        transition: background-color 0.2s ease;
+        margin-top: 5px;
+        width: 100%;
+      }
+
+      .generate-btn:hover {
+        background: #1e7e34;
+      }
+
+      .generate-btn:disabled {
+        background: #6c757d;
+        cursor: not-allowed;
+      }
+
+      .loading {
+        text-align: center;
+        padding: 20px;
+        color: #6c757d;
+        font-style: italic;
+      }
+
+      .api-status {
+        margin-top: 10px;
+        padding: 10px;
+        border-radius: 4px;
+        font-size: 14px;
+        display: none;
+      }
+
+      .api-status.error {
+        background: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+        display: block;
+      }
+
+      .api-status.warning {
+        background: #fff3cd;
+        color: #856404;
+        border: 1px solid #ffeaa7;
+        display: block;
+      }
+
+      .api-status.info {
+        background: #d1ecf1;
+        color: #0c5460;
+        border: 1px solid #bee5eb;
+        display: block;
+      }
+
+      .api-retry {
+        text-align: center;
+        margin-top: 10px;
+      }
+
+      .retry-btn {
+        background: #007cba;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: background-color 0.2s ease;
+      }
+
+      .retry-btn:hover {
+        background: #005a87;
+      }
+
+      .retry-btn:disabled {
+        background: #6c757d;
+        cursor: not-allowed;
+      }
+
+      @media (max-width: 768px) {
         body {
-            font-family: Arial, sans-serif;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #f5f5f5;
+          padding: 10px;
         }
+
         .container {
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+          padding: 20px;
         }
-        .controls {
-            margin-bottom: 20px;
-            padding: 15px;
-            background: #f9f9f9;
-            border-radius: 5px;
+
+        h1 {
+          font-size: 2rem;
         }
+
         .control-group {
-            display: inline-block;
-            margin-right: 20px;
-            margin-bottom: 10px;
+          display: block;
+          margin-right: 0;
+          margin-bottom: 15px;
         }
-        label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
+
+        .control-group.indented,
+        .separator-options,
+        .terminator-options {
+          margin-left: 15px;
         }
-        input, select {
-            padding: 5px;
-            border: 1px solid #ddd;
-            border-radius: 3px;
+
+        .separator-options,
+        .terminator-options {
+          padding-left: 10px;
         }
-        .password-list {
-            margin-top: 20px;
-        }
+
         .password-item {
-            display: flex;
-            align-items: center;
-            margin: 10px 0;
-            padding: 10px;
-            background: #f9f9f9;
-            border-radius: 5px;
-            border-left: 4px solid #007cba;
+          flex-direction: column;
+          align-items: stretch;
         }
+
         .password-text {
-            flex-grow: 1;
-            font-family: 'Courier New', monospace;
-            font-size: 16px;
-            font-weight: bold;
-            color: #333;
+          margin-bottom: 10px;
+          text-align: center;
         }
+
         .copy-btn {
-            background: #007cba;
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 3px;
-            cursor: pointer;
-            margin-left: 10px;
+          margin-left: 0;
+          align-self: center;
         }
-        .copy-btn:hover {
-            background: #005a87;
-        }
-        .copy-btn.copied {
-            background: #28a745;
-        }
-        .generate-btn {
-            background: #28a745;
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: bold;
-        }
-        .generate-btn:hover {
-            background: #1e7e34;
-        }
+      }
     </style>
-    <script>
+  </head>
 
-        const wordlist = [
-            "ability", "able", "aboard", "about", "above", "accept", "accident", "according",
-            "account", "accurate", "acres", "across", "act", "action", "active", "activity",
-            "actual", "actually", "add", "addition", "additional", "adjective", "adult", "adventure",
-            "advice", "affect", "afraid", "after", "afternoon", "again", "against", "age",
-            "ago", "agree", "ahead", "aid", "air", "airplane", "alike", "alive",
-            "all", "allow", "almost", "alone", "along", "aloud", "alphabet", "already",
-            "also", "although", "am", "among", "amount", "ancient", "angle", "angry",
-            "animal", "announced", "another", "answer", "ants", "any", "anybody", "anyone",
-            "anything", "anyway", "anywhere", "apart", "apartment", "appearance", "apple", "applied",
-            "appropriate", "are", "area", "arm", "army", "around", "arrange", "arrangement",
-            "arrive", "arrow", "art", "article", "as", "aside", "ask", "asleep",
-            "at", "ate", "atmosphere", "atom", "atomic", "attached", "attack", "attempt",
-            "attention", "audience", "author", "automobile", "available", "average", "avoid", "aware",
-            "away", "baby", "back", "bad", "badly", "bag", "balance", "ball",
-            "balloon", "band", "bank", "bar", "bare", "bark", "barn", "base",
-            "baseball", "basic", "basis", "basket", "bat", "battle", "be", "bean",
-            "bear", "beat", "beautiful", "beauty", "became", "because", "become", "becoming",
-            "bee", "been", "before", "began", "beginning", "begun", "behavior", "behind",
-            "being", "believed", "bell", "belong", "below", "belt", "bend", "beneath",
-            "bent", "beside", "best", "bet", "better", "between", "beyond", "bicycle",
-            "bigger", "biggest", "bill", "birds", "birth", "birthday", "bit", "bite",
-            "black", "blank", "blanket", "blew", "blind", "block", "blood", "blow",
-            "blue", "board", "boat", "body", "bone", "book", "border", "born",
-            "both", "bottle", "bottom", "bound", "bow", "bowl", "box", "boy",
-            "brain", "branch", "brass", "brave", "bread", "break", "breakfast", "breath",
-            "breathe", "breathing", "breeze", "brick", "bridge", "brief", "bright", "bring",
-            "broad", "broke", "broken", "brother", "brought", "brown", "brush", "buffalo",
-            "build", "building", "built", "buried", "burn", "burst", "bus", "bush",
-            "business", "busy", "but", "butter", "buy", "by", "cabin", "cage",
-            "cake", "call", "calm", "came", "camera", "camp", "can", "canal",
-            "cannot", "cap", "capital", "captain", "captured", "car", "carbon", "card",
-            "care", "careful", "carefully", "carried", "carry", "case", "cast", "castle",
-            "cat", "catch", "cattle", "caught", "cause", "cave", "cell", "cent",
-            "center", "central", "century", "certain", "certainly", "chain", "chair", "chamber",
-            "chance", "change", "changing", "chapter", "character", "characteristic", "charge", "chart",
-            "check", "cheese", "chemical", "chest", "chicken", "chief", "child", "children",
-            "choice", "choose", "chose", "chosen", "church", "circle", "circus", "citizen",
-            "city", "class", "classroom", "claws", "clay", "clean", "clear", "clearly",
-            "climate", "climb", "clock", "close", "closely", "closer", "cloth", "clothes",
-            "clothing", "cloud", "club", "coach", "coal", "coast", "coat", "coffee",
-            "cold", "collect", "college", "colony", "color", "column", "combination", "combine",
-            "come", "comfortable", "coming", "command", "common", "community", "company", "compare",
-            "compass", "complete", "completely", "complex", "composed", "composition", "compound", "concerned",
-            "condition", "congress", "connected", "consider", "consist", "consonant", "constantly", "construction",
-            "contain", "continent", "continued", "contrast", "control", "conversation", "cook", "cookies",
-            "cool", "copper", "copy", "corn", "corner", "correct", "correctly", "cost",
-            "cotton", "could", "count", "country", "couple", "courage", "course", "court",
-            "cover", "cow", "cowboy", "crack", "cream", "create", "creature", "crew",
-            "crop", "cross", "crowd", "cry", "cup", "curious", "current", "curve",
-            "customs", "cut", "cutting", "daily", "damage", "dance", "danger", "dangerous",
-            "dark", "darkness", "date", "daughter", "dawn", "day", "dead", "deal",
-            "dear", "death", "decide", "declared", "deep", "deeply", "deer", "definition",
-            "degree", "depend", "depth", "describe", "desert", "design", "desk", "detail",
-            "determine", "develop", "development", "diagram", "diameter", "did", "die", "differ",
-            "difference", "different", "difficult", "difficulty", "dig", "dinner", "direct", "direction",
-            "directly", "dirt", "dirty", "disappear", "discover", "discovery", "discuss", "discussion",
-            "disease", "dish", "distance", "distant", "divide", "division", "do", "doctor",
-            "does", "dog", "doing", "doll", "dollar", "done", "donkey", "door",
-            "dot", "double", "doubt", "down", "dozen", "draw", "drawn", "dream",
-            "dress", "drew", "dried", "drink", "drive", "driven", "driver", "driving",
-            "drop", "dropped", "drove", "dry", "duck", "due", "dug", "dull",
-            "during", "dust", "duty", "each", "eager", "ear", "earlier", "early",
-            "earn", "earth", "easier", "easily", "east", "easy", "eat", "eaten",
-            "edge", "education", "effect", "effort", "egg", "eight", "either", "electric",
-            "electricity", "element", "elephant", "eleven", "else", "empty", "end", "enemy",
-            "energy", "engine", "engineer", "enjoy", "enough", "enter", "entire", "entirely",
-            "environment", "equal", "equally", "equator", "equipment", "escape", "especially", "essential",
-            "establish", "even", "evening", "event", "eventually", "ever", "every", "everybody",
-            "everyone", "everything", "everywhere", "evidence", "exact", "exactly", "examine", "example",
-            "excellent", "except", "exchange", "excited", "excitement", "exciting", "exclaimed", "exercise",
-            "exist", "expect", "experience", "experiment", "explain", "explanation", "explore", "express",
-            "expression", "extra", "eye", "face", "facing", "fact", "factor", "factory",
-            "failed", "fair", "fairly", "fall", "fallen", "familiar", "family", "famous",
-            "far", "farm", "farmer", "farther", "fast", "fastened", "faster", "fat",
-            "father", "favorite", "fear", "feathers", "feature", "fed", "feed", "feel",
-            "feet", "fell", "fellow", "felt", "fence", "few", "fewer", "field",
-            "fierce", "fifteen", "fifth", "fifty", "fight", "fighting", "figure", "fill",
-            "film", "final", "finally", "find", "fine", "finest", "finger", "finish",
-            "fire", "fireplace", "firm", "first", "fish", "five", "fix", "flag",
-            "flame", "flat", "flew", "flies", "flight", "floating", "floor", "flow",
-            "flower", "fly", "fog", "folks", "follow", "food", "foot", "football",
-            "for", "force", "foreign", "forest", "forget", "forgot", "forgotten", "form",
-            "former", "fort", "forth", "forty", "forward", "fought", "found", "four",
-            "fourth", "fox", "frame", "free", "freedom", "frequently", "fresh", "friend",
-            "friendly", "frighten", "frog", "from", "front", "frozen", "fruit", "fuel",
-            "full", "fully", "fun", "function", "funny", "fur", "furniture", "further",
-            "future", "gain", "game", "garage", "garden", "gas", "gasoline", "gate",
-            "gather", "gave", "general", "generally", "gentle", "gently", "get", "getting",
-            "giant", "gift", "girl", "give", "given", "giving", "glad", "glass",
-            "globe", "go", "goes", "gold", "golden", "gone", "good", "goose",
-            "got", "government", "grabbed", "grade", "gradually", "grain", "grandfather", "grandmother",
-            "graph", "grass", "gravity", "gray", "great", "greater", "greatest", "greatly",
-            "green", "grew", "ground", "group", "grow", "grown", "growth", "guard",
-            "guess", "guide", "gulf", "gun", "habit", "had", "hair", "half",
-            "halfway", "hall", "hand", "handle", "handsome", "hang", "happen", "happened",
-            "happily", "happy", "harbor", "hard", "harder", "hardly", "has", "hat",
-            "have", "having", "hay", "he", "headed", "heading", "health", "heard",
-            "hearing", "heart", "heat", "heavy", "height", "held", "hello", "help",
-            "helpful", "her", "herd", "here", "herself", "hidden", "hide", "high",
-            "higher", "highest", "highway", "hill", "him", "himself", "his", "history",
-            "hit", "hold", "hole", "hollow", "home", "honor", "hope", "horn",
-            "horse", "hospital", "hot", "hour", "house", "how", "however", "huge",
-            "human", "hundred", "hung", "hungry", "hunt", "hunter", "hurried", "hurry",
-            "hurt", "husband", "ice", "idea", "identity", "if", "ill", "image",
-            "imagine", "immediately", "importance", "important", "impossible", "improve", "in", "inch",
-            "include", "including", "income", "increase", "indeed", "independent", "indicate", "individual",
-            "industrial", "industry", "influence", "information", "inside", "instance", "instant", "instead",
-            "instrument", "interest", "interior", "into", "introduced", "invented", "involved", "iron",
-            "is", "island", "it", "its", "itself", "jack", "jar", "jet",
-            "job", "join", "joined", "journey", "joy", "judge", "jump", "jungle",
-            "just", "keep", "kept", "key", "kids", "kill", "kind", "kitchen",
-            "knew", "knife", "know", "knowledge", "known", "label", "labor", "lack",
-            "lady", "laid", "lake", "lamp", "land", "language", "large", "larger",
-            "largest", "last", "late", "later", "laugh", "law", "lay", "layers",
-            "lead", "leader", "leaf", "learn", "least", "leather", "leave", "leaving",
-            "led", "left", "leg", "length", "lesson", "let", "letter", "level",
-            "library", "lie", "life", "lift", "light", "like", "likely", "limited",
-            "line", "lion", "lips", "liquid", "list", "listen", "little", "live",
-            "living", "load", "local", "locate", "location", "log", "lonely", "long",
-            "longer", "look", "loose", "lose", "loss", "lost", "lot", "loud",
-            "love", "lovely", "low", "lower", "luck", "lucky", "lunch", "lungs",
-            "lying", "machine", "machinery", "mad", "made", "magic", "magnet", "mail",
-            "main", "mainly", "major", "make", "making", "man", "managed", "manner",
-            "manufacturing", "many", "map", "mark", "market", "married", "mass", "massage",
-            "master", "material", "mathematics", "matter", "may", "maybe", "me", "meal",
-            "mean", "means", "meant", "measure", "meat", "medicine", "meet", "melted",
-            "member", "memory", "men", "mental", "merely", "met", "metal", "method",
-            "mice", "middle", "might", "mighty", "mile", "military", "milk", "mill",
-            "mind", "mine", "minerals", "minute", "mirror", "missing", "mission", "mistake",
-            "mix", "mixture", "model", "modern", "molecular", "moment", "money", "monkey",
-            "month", "mood", "moon", "more", "morning", "most", "mostly", "mother",
-            "motion", "motor", "mountain", "mouse", "mouth", "move", "movement", "movie",
-            "moving", "mud", "muscle", "music", "musical", "must", "my", "myself",
-            "mysterious", "nails", "name", "nation", "national", "native", "natural", "naturally",
-            "nature", "near", "nearby", "nearer", "nearest", "nearly", "necessary", "neck",
-            "needed", "needle", "needs", "negative", "neighbor", "neighborhood", "nervous", "nest",
-            "never", "new", "news", "newspaper", "next", "nice", "night", "nine",
-            "no", "nobody", "nodded", "noise", "none", "noon", "nor", "north",
-            "nose", "not", "note", "noted", "nothing", "notice", "noun", "now",
-            "number", "numeral", "nuts", "object", "observe", "obtain", "occasionally", "occur",
-            "ocean", "of", "off", "offer", "office", "officer", "official", "oil",
-            "old", "older", "oldest", "on", "once", "one", "only", "onto",
-            "open", "operation", "opinion", "opportunity", "opposite", "or", "orange", "orbit",
-            "order", "ordinary", "organization", "organized", "origin", "original", "other", "ought",
-            "our", "ourselves", "out", "outer", "outline", "outside", "over", "own",
-            "owner", "oxygen", "pack", "package", "page", "paid", "pain", "paint",
-            "pair", "palace", "pale", "pan", "paper", "paragraph", "parallel", "parent",
-            "park", "part", "particles", "particular", "particularly", "partly", "parts", "party",
-            "pass", "passage", "past", "path", "pattern", "pay", "peace", "pen",
-            "pencil", "people", "per", "percent", "perfect", "perfectly", "perhaps", "period",
-            "person", "personal", "pet", "phrase", "physical", "piano", "pick", "picture",
-            "pictured", "pie", "piece", "pig", "pile", "pilot", "pine", "pink",
-            "pipe", "pitch", "place", "plain", "plan", "plane", "planet", "planned",
-            "planning", "plant", "plastic", "plate", "plates", "play", "pleasant", "please",
-            "pleasure", "plenty", "plural", "plus", "pocket", "poem", "poet", "poetry",
-            "point", "pole", "police", "policeman", "political", "pond", "pony", "pool",
-            "poor", "popular", "population", "porch", "port", "position", "positive", "possible",
-            "possibly", "post", "pot", "potatoes", "pound", "pour", "powder", "power",
-            "powerful", "practical", "practice", "prepare", "present", "president", "press", "pressure",
-            "pretty", "prevent", "previous", "price", "pride", "primitive", "principal", "principle",
-            "printed", "private", "prize", "probably", "problem", "process", "produce", "product",
-            "production", "program", "progress", "promised", "proper", "properly", "property", "protection",
-            "proud", "prove", "provide", "public", "pull", "pupil", "pure", "purple",
-            "purpose", "push", "put", "putting", "quarter", "queen", "question", "quick",
-            "quickly", "quiet", "quietly", "quite", "rabbit", "race", "radio", "railroad",
-            "rain", "raise", "ran", "ranch", "range", "rapidly", "rate", "rather",
-            "raw", "rays", "reach", "read", "reader", "ready", "real", "realize",
-            "rear", "reason", "recall", "receive", "recent", "recently", "recognize", "record",
-            "red", "refer", "refused", "region", "regular", "related", "relationship", "religious",
-            "remain", "remarkable", "remember", "remove", "repeat", "replace", "replied", "report",
-            "represent", "require", "research", "respect", "rest", "result", "return", "review",
-            "rhyme", "rhythm", "rice", "rich", "ride", "riding", "right", "ring",
-            "rise", "rising", "river", "road", "roar", "rock", "rocket", "rocky",
-            "rod", "roll", "roof", "room", "root", "rope", "rose", "rough",
-            "round", "route", "row", "rubbed", "rubber", "rule", "ruler", "run",
-            "running", "rush", "sad", "saddle", "safe", "safety", "said", "sail",
-            "sale", "salmon", "salt", "same", "sand", "sang", "sat", "satellites",
-            "satisfied", "save", "saved", "saw", "say", "scale", "scared", "scene",
-            "school", "science", "scientific", "scientist", "score", "screen", "sea", "search",
-            "season", "seat", "second", "secret", "section", "see", "seed", "seeing",
-            "seems", "seen", "seldom", "select", "selection", "sell", "send", "sense",
-            "sent", "sentence", "separate", "series", "serious", "serve", "service", "sets",
-            "setting", "settle", "settlers", "seven", "several", "shade", "shadow", "shake",
-            "shaking", "shall", "shallow", "shape", "share", "sharp", "she", "sheep",
-            "sheet", "shelf", "shells", "shelter", "shine", "shinning", "ship", "shirt",
-            "shoe", "shoot", "shop", "shore", "short", "shorter", "shot", "should",
-            "shoulder", "shout", "show", "shown", "shut", "sick", "sides", "sight",
-            "sign", "signal", "silence", "silent", "silk", "silly", "silver", "similar",
-            "simple", "simplest", "simply", "since", "sing", "single", "sink", "sister",
-            "sit", "sitting", "situation", "six", "size", "skill", "skin", "sky",
-            "slabs", "slave", "sleep", "slept", "slide", "slight", "slightly", "slip",
-            "slipped", "slope", "slow", "slowly", "small", "smaller", "smallest", "smell",
-            "smile", "smoke", "smooth", "snake", "snow", "so", "soap", "social",
-            "society", "soft", "softly", "soil", "solar", "sold", "soldier", "solid",
-            "solution", "solve", "some", "somebody", "somehow", "someone", "something", "sometime",
-            "somewhere", "son", "song", "soon", "sort", "sound", "source", "south",
-            "southern", "space", "speak", "special", "species", "specific", "speech", "speed",
-            "spell", "spend", "spent", "spider", "spin", "spirit", "spite", "split",
-            "spoken", "sport", "spread", "spring", "square", "stage", "stairs", "stand",
-            "standard", "star", "stared", "start", "state", "statement", "station", "stay",
-            "steady", "steam", "steel", "steep", "stems", "step", "stepped", "stick",
-            "stiff", "still", "stock", "stomach", "stone", "stood", "stop", "stopped",
-            "store", "storm", "story", "stove", "straight", "strange", "stranger", "straw",
-            "stream", "street", "strength", "stretch", "strike", "string", "strip", "strong",
-            "stronger", "struck", "structure", "struggle", "stuck", "student", "studied", "studying",
-            "subject", "substance", "success", "successful", "such", "sudden", "suddenly", "sugar",
-            "suggest", "suit", "sum", "summer", "sun", "sunlight", "supper", "supply",
-            "support", "suppose", "sure", "surface", "surprise", "surrounded", "swam", "sweet",
-            "swept", "swim", "swimming", "swing", "swung", "syllable", "symbol", "system",
-            "table", "tail", "take", "taken", "tales", "talk", "tall", "tank",
-            "tape", "task", "taste", "taught", "tax", "tea", "teach", "teacher",
-            "team", "tears", "teeth", "telephone", "television", "tell", "temperature", "ten",
-            "tent", "term", "terrible", "test", "than", "thank", "that", "thee",
-            "them", "themselves", "then", "theory", "there", "therefore", "these", "they",
-            "thick", "thin", "thing", "think", "third", "thirty", "this", "those",
-            "thou", "though", "thought", "thousand", "thread", "three", "threw", "throat",
-            "through", "throughout", "throw", "thrown", "thumb", "thus", "thy", "tide",
-            "tie", "tight", "tightly", "till", "time", "tin", "tiny", "tip",
-            "tired", "title", "to", "tobacco", "today", "together", "told", "tomorrow",
-            "tone", "tongue", "tonight", "too", "took", "tool", "top", "topic",
-            "torn", "total", "touch", "toward", "tower", "town", "toy", "trace",
-            "track", "trade", "traffic", "trail", "train", "transportation", "trap", "travel",
-            "treated", "tree", "triangle", "tribe", "trick", "tried", "trip", "troops",
-            "tropical", "trouble", "truck", "trunk", "truth", "try", "tube", "tune",
-            "turn", "twelve", "twenty", "twice", "two", "type", "typical", "uncle",
-            "under", "underline", "understanding", "unhappy", "union", "unit", "universe", "unknown",
-            "unless", "until", "unusual", "up", "upon", "upper", "upward", "us",
-            "use", "useful", "using", "usual", "usually", "valley", "valuable", "value",
-            "vapor", "variety", "various", "vast", "vegetable", "verb", "vertical", "very",
-            "vessels", "victory", "view", "village", "visit", "visitor", "voice", "volume",
-            "vote", "vowel", "voyage", "wagon", "wait", "walk", "wall", "want",
-            "war", "warm", "warn", "was", "wash", "waste", "watch", "water",
-            "wave", "way", "we", "weak", "wealth", "wear", "weather", "week",
-            "weigh", "weight", "welcome", "well", "went", "were", "west", "western",
-            "wet", "whale", "what", "whatever", "wheat", "wheel", "when", "whenever",
-            "where", "wherever", "whether", "which", "while", "whispered", "whistle", "white",
-            "who", "whole", "whom", "whose", "why", "wide", "widely", "wife",
-            "wild", "will", "willing", "win", "wind", "window", "wing", "winter",
-            "wire", "wise", "wish", "with", "within", "without", "wolf", "women",
-            "won", "wonder", "wonderful", "wood", "wooden", "wool", "word", "wore",
-            "work", "worker", "world", "worried", "worry", "worse", "worth", "would",
-            "wrapped", "write", "writer", "writing", "written", "wrong", "wrote", "yard",
-            "year", "yellow", "yes", "yesterday", "yet", "you", "young", "younger",
-            "your", "yourself", "youth", "zero", "zoo"
-        ];
-
-        function getRandomWord() {
-            return wordlist[Math.floor(Math.random() * wordlist.length)];
-        }
-
-        function getRandomChar(charSet) {
-            return charSet[Math.floor(Math.random() * charSet.length)];
-        }
-
-        function generatePassword() {
-            const wordCount = parseInt(document.getElementById('wordCount').value);
-            const useSpecialChars = document.getElementById('useSpecialChars').checked;
-            const useDigits = document.getElementById('useDigits').checked;
-            const useSeparator = document.getElementById('useSeparator').checked;
-            const useTerminator = document.getElementById('useTerminator').checked;
-            
-            const specialChars = '!@#$%^&*';
-            const digits = '0123456789';
-            
-            let words = [];
-            for (let i = 0; i < wordCount; i++) {
-                words.push(getRandomWord());
-            }
-            
-            let password = '';
-            
-            // Build character set for separators/terminators
-            let charSet = '';
-            if (useSpecialChars) charSet += specialChars;
-            if (useDigits) charSet += digits;
-            
-            // Handle separators between words
-            if (useSeparator && charSet.length > 0) {
-                // Use different random separator for each gap
-                let separatedWords = [words[0]];
-                for (let i = 1; i < words.length; i++) {
-                    separatedWords.push(getRandomChar(charSet));
-                    separatedWords.push(words[i]);
-                }
-                password = separatedWords.join('');
-            } else {
-                password = words.join('');
-            }
-            
-            // Handle terminator at end
-            if (useTerminator && charSet.length > 0) {
-                password += getRandomChar(charSet);
-            }
-            
-            return password;
-        }
-
-        function generatePasswords() {
-            const passwordCount = parseInt(document.getElementById('passwordCount').value);
-            const passwordList = document.getElementById('passwordList');
-            passwordList.innerHTML = '';
-            
-            for (let i = 0; i < passwordCount; i++) {
-                const password = generatePassword();
-                
-                const passwordItem = document.createElement('div');
-                passwordItem.className = 'password-item';
-                
-                const passwordText = document.createElement('span');
-                passwordText.className = 'password-text';
-                passwordText.textContent = password;
-                
-                const copyBtn = document.createElement('button');
-                copyBtn.className = 'copy-btn';
-                copyBtn.textContent = 'Copy';
-                copyBtn.onclick = () => copyToClipboard(password, copyBtn);
-                
-                passwordItem.appendChild(passwordText);
-                passwordItem.appendChild(copyBtn);
-                passwordList.appendChild(passwordItem);
-            }
-        }
-
-        function copyToClipboard(text, button) {
-            navigator.clipboard.writeText(text).then(() => {
-                const originalText = button.textContent;
-                button.textContent = 'Copied!';
-                button.classList.add('copied');
-                setTimeout(() => {
-                    button.textContent = originalText;
-                    button.classList.remove('copied');
-                }, 2000);
-            }).catch(err => {
-                console.error('Failed to copy: ', err);
-                // Fallback for older browsers
-                const textArea = document.createElement('textarea');
-                textArea.value = text;
-                document.body.appendChild(textArea);
-                textArea.select();
-                document.execCommand('copy');
-                document.body.removeChild(textArea);
-                
-                const originalText = button.textContent;
-                button.textContent = 'Copied!';
-                button.classList.add('copied');
-                setTimeout(() => {
-                    button.textContent = originalText;
-                    button.classList.remove('copied');
-                }, 2000);
-            });
-        }
-    </script>
-
-</head>
-
-<body>
+  <body>
     <div class="container">
-        <h1>XKCD Password Generator</h1>
-        <p>Generate secure, memorable passwords using common English words. No uppercase letters to forget!</p>
-        
-        <div class="controls">
-            <div class="control-group">
-                <label for="wordCount">Number of words:</label>
-                <select id="wordCount">
-                    <option value="2">2 words</option>
-                    <option value="3">3 words</option>
-                    <option value="4" selected>4 words</option>
-                    <option value="5">5 words</option>
-                </select>
-            </div>
-            
-            <div class="control-group">
-                <label for="passwordCount">Number of passwords:</label>
-                <select id="passwordCount">
-                    <option value="3">3 passwords</option>
-                    <option value="5" selected>5 passwords</option>
-                    <option value="8">8 passwords</option>
-                    <option value="10">10 passwords</option>
-                </select>
-            </div>
-            
-            <div class="control-group">
-                <label>
-                    <input type="checkbox" id="useSeparator" checked> Use separators between words
-                </label>
-            </div>
-            
-            <div class="control-group">
-                <label>
-                    <input type="checkbox" id="useTerminator" checked> Use terminator at end
-                </label>
-            </div>
-            
-            <div class="control-group">
-                <label>
-                    <input type="checkbox" id="useSpecialChars" checked> Include special characters (!@#$%^&*)
-                </label>
-            </div>
-            
-            <div class="control-group">
-                <label>
-                    <input type="checkbox" id="useDigits" checked> Include digits (0-9)
-                </label>
-            </div>
-            
-            <button class="generate-btn" onclick="generatePasswords()">Generate Passwords</button>
-        </div>
-        
-        <div class="password-list" id="passwordList">
-            <!-- Passwords will be generated here -->
-        </div>
-    </div>
-    
-    <script>
-        // Generate initial passwords when page loads
-        window.onload = function() {
-            generatePasswords();
-        };
-    </script>
-</body>
+      <h1>XKCD Password Generator</h1>
 
+      <div class="security-notes">
+        <article class="blog-post">
+          <p>
+            Generate secure, memorable passwords using common English words. No
+            uppercase letters to forget!
+          </p>
+          <p>
+            Inspired by
+            <a href="https://xkcd.com/936/">XKCD #936: Password Strength</a> -
+            because <code>correct horse battery staple</code> is both more
+            secure and more memorable than <code>Tr0ub4dor&amp;3</code>.
+          </p>
+          <h2 id="how-to-use">How to Use</h2>
+          <ol>
+            <li>Adjust settings below to customize your passwords</li>
+            <li>Click “Generate Passwords” to create multiple options</li>
+            <li>Click “Copy” next to your favorite password</li>
+            <li>
+              Use it for WiFi passwords, mobile apps, or other non-critical
+              accounts
+            </li>
+          </ol>
+          <h2 id="security-notes">Security Notes</h2>
+          <p>
+            ⚠️ <strong>For demonstration purposes only</strong> - this tool is
+            designed for non-critical accounts <strong>ONLY</strong>. For
+            important accounts (banking, email, etc.), always use a proper
+            password manager like 1Password or Bitwarden with two-factor
+            authentication.
+          </p>
+          <p>
+            ℹ️
+            <strong
+              >The words for this tool are generated using external
+              APIs.</strong
+            >
+            (The main API used is
+            <a href="https://random-word-api.herokuapp.com"
+              >Heroku Random Word API</a
+            >
+            with
+            <a
+              href="https://random-words-api.kushcreates.com/api/v1/random-word"
+              >Kush Creates Random Words API</a
+            >
+            as a backup.) They do a great job of returning very many random
+            words, but they may not be 100% secure and may be subject to rate
+            limits or other issues. Use at your own risk.
+          </p>
+        </article>
+      </div>
+
+      <!-- Password Generator Interface -->
+      <div class="pwgen-container">
+        <div class="controls">
+          <div class="control-group dropdown-group">
+            <label for="wordCount">Number of words:</label>
+            <select id="wordCount">
+              <option value="2">2 words</option>
+              <option value="3" selected>3 words</option>
+              <option value="4">4 words</option>
+              <option value="5">5 words</option>
+            </select>
+          </div>
+
+          <div class="control-group dropdown-group">
+            <label for="passwordCount">Number of passwords:</label>
+            <select id="passwordCount">
+              <option value="3">3 passwords</option>
+              <option value="5" selected>5 passwords</option>
+              <option value="10">10 passwords</option>
+            </select>
+          </div>
+
+          <div class="control-group checkbox-group">
+            <input type="checkbox" id="useFixedLength" />
+            <label for="useFixedLength">Use fixed word length</label>
+          </div>
+
+          <div
+            class="control-group dropdown-group indented"
+            id="wordLengthGroup"
+            style="display: none"
+          >
+            <label for="wordLength">Word length:</label>
+            <select id="wordLength">
+              <option value="3">3 characters</option>
+              <option value="4">4 characters</option>
+              <option value="5" selected>5 characters</option>
+              <option value="6">6 characters</option>
+              <option value="7">7 characters</option>
+              <option value="8">8 characters</option>
+              <option value="9">9 characters</option>
+              <option value="10">10 characters</option>
+              <option value="11">11 characters</option>
+              <option value="12">12 characters</option>
+            </select>
+          </div>
+
+          <div class="control-group checkbox-group">
+            <input type="checkbox" id="useSeparator" checked />
+            <label for="useSeparator">Use separators between words</label>
+          </div>
+
+          <div class="separator-options indented" id="separatorOptions">
+            <div class="control-group checkbox-group">
+              <input type="checkbox" id="useSeparatorSpaces" checked />
+              <label for="useSeparatorSpaces">Spaces</label>
+            </div>
+
+            <div class="control-group checkbox-group">
+              <input type="checkbox" id="useSeparatorSpecial" checked />
+              <label for="useSeparatorSpecial"
+                >Special characters (!@#$%^&*)</label
+              >
+            </div>
+
+            <div class="control-group checkbox-group">
+              <input type="checkbox" id="useSeparatorDigits" checked />
+              <label for="useSeparatorDigits">Digits (0-9)</label>
+            </div>
+          </div>
+
+          <div class="control-group checkbox-group">
+            <input type="checkbox" id="useTerminator" checked />
+            <label for="useTerminator">Use terminator at end</label>
+          </div>
+
+          <div class="terminator-options indented" id="terminatorOptions">
+            <div class="control-group checkbox-group">
+              <input type="checkbox" id="useTerminatorSpecial" checked />
+              <label for="useTerminatorSpecial"
+                >Special characters (!@#$%^&*)</label
+              >
+            </div>
+
+            <div class="control-group checkbox-group">
+              <input type="checkbox" id="useTerminatorDigits" checked />
+              <label for="useTerminatorDigits">Digits (0-9)</label>
+            </div>
+          </div>
+
+          <button class="generate-btn" onclick="generatePasswords()">
+            Generate Passwords
+          </button>
+        </div>
+
+        <div class="password-list" id="passwordList">
+          <div class="loading" id="loading" style="display: none">
+            <p>Generating passwords...</p>
+          </div>
+        </div>
+
+        <div class="api-status" id="apiStatus"></div>
+
+        <!-- API retry button (hidden by default) -->
+        <div class="api-retry" id="apiRetry" style="display: none">
+          <button class="retry-btn" onclick="retryApis()">
+            Retry Online APIs
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      /**
+       * XKCD Password Generator
+       * Uses external API for random words with length parameter support
+       */
+
+      // Configuration - APIs that support length parameter
+      const WORD_APIS = [
+        {
+          name: "Random Words API (Heroku)",
+          baseUrl: "https://random-word-api.herokuapp.com/word",
+          headers: { Accept: "application/json" },
+          parser: (data) => (Array.isArray(data) ? data[0] : data),
+          supportsLength: true,
+        },
+        {
+          name: "Kush Creates Random Words API",
+          baseUrl:
+            "https://random-words-api.kushcreates.com/api/v1/random-word",
+          headers: { Accept: "application/json" },
+          parser: (data) => {
+            if (typeof data === "object" && data.word) {
+              return data.word;
+            }
+            return Array.isArray(data) ? data[0] : data;
+          },
+          supportsLength: true,
+        },
+      ];
+
+      let currentApiIndex = 0;
+      const FALLBACK_WORDS = [
+        "ability",
+        "account",
+        "action",
+        "activity",
+        "address",
+        "adventure",
+        "advice",
+        "airplane",
+        "animal",
+        "answer",
+        "apple",
+        "area",
+        "army",
+        "article",
+        "attention",
+        "audience",
+        "balance",
+        "baseball",
+        "battle",
+        "beautiful",
+        "beginning",
+        "behavior",
+        "believe",
+        "bicycle",
+        "brother",
+        "building",
+        "business",
+        "camera",
+        "capital",
+        "careful",
+        "century",
+        "certain",
+        "chance",
+        "change",
+        "character",
+        "chicken",
+        "children",
+        "choice",
+        "circle",
+        "citizen",
+        "climate",
+        "clothes",
+        "coffee",
+        "college",
+        "color",
+        "company",
+        "computer",
+        "control",
+        "country",
+        "course",
+        "create",
+        "culture",
+        "customer",
+        "danger",
+        "daughter",
+        "decision",
+        "develop",
+        "different",
+        "dinner",
+        "direction",
+        "discuss",
+        "doctor",
+        "economy",
+        "education",
+        "effect",
+        "election",
+        "energy",
+        "engine",
+        "evening",
+        "example",
+        "exercise",
+        "experience",
+        "explain",
+        "family",
+        "father",
+        "feature",
+        "finger",
+        "finish",
+        "flower",
+        "forget",
+        "friend",
+        "future",
+        "garden",
+        "government",
+        "growth",
+        "guitar",
+        "happen",
+        "health",
+        "history",
+        "holiday",
+        "hospital",
+        "hotel",
+        "house",
+        "however",
+        "hundred",
+        "husband",
+        "imagine",
+        "improve",
+        "include",
+        "increase",
+        "indeed",
+        "instead",
+        "kitchen",
+        "knowledge",
+        "language",
+        "leader",
+        "letter",
+        "listen",
+        "little",
+        "machine",
+        "manage",
+        "market",
+        "measure",
+        "medical",
+        "meeting",
+        "memory",
+        "message",
+        "method",
+        "minute",
+        "mission",
+        "moment",
+        "money",
+        "mother",
+        "mountain",
+        "movement",
+        "music",
+        "nation",
+        "nature",
+        "network",
+        "nothing",
+        "number",
+        "object",
+        "office",
+        "operation",
+        "opinion",
+        "option",
+        "orange",
+        "order",
+        "organization",
+        "other",
+        "outside",
+        "owner",
+        "paper",
+        "parent",
+        "party",
+        "pattern",
+        "people",
+        "period",
+        "person",
+        "phone",
+        "picture",
+        "piece",
+        "place",
+        "player",
+        "point",
+        "police",
+        "policy",
+        "popular",
+        "position",
+        "possible",
+        "power",
+        "prepare",
+        "present",
+        "president",
+        "pressure",
+        "pretty",
+        "prevent",
+        "price",
+        "private",
+        "probably",
+        "problem",
+        "process",
+        "produce",
+        "product",
+        "program",
+        "project",
+        "property",
+        "protect",
+        "provide",
+        "public",
+        "purpose",
+        "quality",
+        "question",
+        "quickly",
+        "rather",
+        "reality",
+        "reason",
+        "receive",
+        "record",
+        "reduce",
+        "reflect",
+        "region",
+        "relate",
+        "remember",
+        "remove",
+        "report",
+        "represent",
+        "require",
+        "research",
+        "resource",
+        "respond",
+        "result",
+        "return",
+        "reveal",
+        "right",
+        "school",
+        "science",
+        "season",
+        "second",
+        "section",
+        "security",
+        "senior",
+        "series",
+        "service",
+        "seven",
+        "several",
+        "should",
+        "simple",
+        "single",
+        "sister",
+        "social",
+        "society",
+        "soldier",
+        "someone",
+        "something",
+        "sometimes",
+        "sound",
+        "source",
+        "southern",
+        "space",
+        "speak",
+        "special",
+        "stage",
+        "standard",
+        "start",
+        "state",
+        "station",
+        "story",
+        "strategy",
+        "street",
+        "strong",
+        "structure",
+        "student",
+        "study",
+        "stuff",
+        "style",
+        "subject",
+        "success",
+        "suddenly",
+        "suggest",
+        "summer",
+        "support",
+        "system",
+        "table",
+        "teacher",
+        "technology",
+        "television",
+        "temperature",
+        "theory",
+        "these",
+        "thing",
+        "think",
+        "three",
+        "through",
+        "throw",
+        "thumb",
+        "ticket",
+        "today",
+        "together",
+        "tonight",
+        "total",
+        "toward",
+        "trade",
+        "training",
+        "travel",
+        "treat",
+        "treatment",
+        "trouble",
+        "truly",
+        "truth",
+        "turn",
+        "twelve",
+        "twenty",
+        "under",
+        "understand",
+        "union",
+        "until",
+        "upon",
+        "value",
+        "various",
+        "vehicle",
+        "version",
+        "video",
+        "voice",
+        "waste",
+        "watch",
+        "water",
+        "weapon",
+        "weight",
+        "western",
+        "whatever",
+        "where",
+        "whether",
+        "which",
+        "while",
+        "white",
+        "whole",
+        "whose",
+        "window",
+        "without",
+        "woman",
+        "wonder",
+        "worker",
+        "world",
+        "worry",
+        "worse",
+        "write",
+        "writer",
+        "wrong",
+        "young",
+      ];
+
+      // State management
+      let wordCache = new Map(); // Changed to Map for length-based caching
+      let isApiWorking = true;
+      let apiErrorCount = 0;
+
+      /**
+       * Filter words by length from fallback list
+       */
+      function getWordsByLength(length) {
+        const filtered = FALLBACK_WORDS.filter(
+          (word) => word.length === length
+        );
+        console.log(
+          `Found ${filtered.length} words of length ${length} in fallback list`
+        );
+        return filtered;
+      }
+
+      /**
+       * Build API URL with length parameter if supported
+       */
+      function buildApiUrl(api, targetLength) {
+        if (targetLength && api.supportsLength) {
+          return `${api.baseUrl}?length=${targetLength}`;
+        }
+        return api.baseUrl;
+      }
+
+      /**
+       * Fetch a random word from APIs with length parameter support
+       */
+      async function getRandomWord(targetLength = null) {
+        // Check cache first (organized by length)
+        const cacheKey = targetLength || "any";
+        if (wordCache.has(cacheKey) && wordCache.get(cacheKey).length > 0) {
+          const cachedWords = wordCache.get(cacheKey);
+          return cachedWords.pop();
+        }
+
+        // Try APIs if still working
+        if (isApiWorking) {
+          // Try each API in sequence
+          for (let i = 0; i < WORD_APIS.length; i++) {
+            const apiIndex = (currentApiIndex + i) % WORD_APIS.length;
+            const api = WORD_APIS[apiIndex];
+
+            try {
+              const apiUrl = buildApiUrl(api, targetLength);
+              console.log(`Trying ${api.name} with URL: ${apiUrl}`);
+
+              const response = await fetch(apiUrl, {
+                method: "GET",
+                headers: api.headers,
+                signal: AbortSignal.timeout(5000),
+              });
+
+              if (!response.ok) {
+                throw new Error(
+                  `${api.name} responded with status: ${response.status}`
+                );
+              }
+
+              // Parse response based on content type
+              let data;
+              const contentType = response.headers.get("content-type");
+              if (contentType && contentType.includes("application/json")) {
+                data = await response.json();
+              } else {
+                data = await response.text();
+              }
+
+              let word = api.parser(data);
+
+              // Clean up the word
+              if (typeof word !== "string") {
+                word = String(word);
+              }
+              word = word.trim().toLowerCase();
+
+              console.log(`API ${api.name} returned:`, {
+                url: apiUrl,
+                raw: data,
+                parsed: word,
+                length: word.length,
+                targetLength,
+              });
+
+              // Validate the word
+              if (
+                word &&
+                typeof word === "string" &&
+                word.length >= 3 &&
+                word.length <= 16 &&
+                /^[a-zA-Z]+$/.test(word)
+              ) {
+                // If we requested a specific length, verify it matches
+                if (targetLength && word.length !== targetLength) {
+                  console.warn(
+                    `API returned word "${word}" with length ${word.length}, expected ${targetLength}`
+                  );
+                  // Don't throw error, just fall through to try next API or fallback
+                  continue;
+                }
+
+                // Success! Reset error count and update current API
+                apiErrorCount = 0;
+                currentApiIndex = apiIndex;
+                return word;
+              } else {
+                throw new Error(
+                  `Word validation failed for ${api.name}: "${word}" (length: ${word?.length})`
+                );
+              }
+            } catch (error) {
+              console.warn(`${api.name} failed:`, error.message);
+              // Continue to next API
+            }
+          }
+
+          // All API attempts failed
+          apiErrorCount++;
+          console.warn(
+            `All API attempts failed. Error count: ${apiErrorCount}`
+          );
+
+          // After 2 total failures, switch to fallback mode
+          if (apiErrorCount >= 2) {
+            isApiWorking = false;
+            const statusMsg = targetLength
+              ? `Using offline word list for ${targetLength}-character words - APIs temporarily unavailable`
+              : "Using offline word list - APIs temporarily unavailable";
+            showApiStatus("warning", statusMsg);
+          }
+        }
+
+        // Fallback to local word list
+        if (targetLength) {
+          const wordsOfLength = getWordsByLength(targetLength);
+          if (wordsOfLength.length > 0) {
+            return wordsOfLength[
+              Math.floor(Math.random() * wordsOfLength.length)
+            ];
+          } else {
+            // If no words of target length, fall back to closest available length
+            console.warn(
+              `No ${targetLength}-character words in fallback list, finding closest match`
+            );
+
+            // Find closest available lengths
+            const availableLengths = [
+              ...new Set(FALLBACK_WORDS.map((w) => w.length)),
+            ].sort((a, b) => a - b);
+            const closest = availableLengths.reduce((prev, curr) =>
+              Math.abs(curr - targetLength) < Math.abs(prev - targetLength)
+                ? curr
+                : prev
+            );
+
+            const fallbackWords = getWordsByLength(closest);
+            return fallbackWords[
+              Math.floor(Math.random() * fallbackWords.length)
+            ];
+          }
+        }
+
+        return FALLBACK_WORDS[
+          Math.floor(Math.random() * FALLBACK_WORDS.length)
+        ];
+      }
+
+      /**
+       * Preload words into cache for better performance
+       */
+      async function preloadWords(targetLength = null, count = 10) {
+        const cacheKey = targetLength || "any";
+
+        if (!wordCache.has(cacheKey)) {
+          wordCache.set(cacheKey, []);
+        }
+
+        const promises = [];
+        for (let i = 0; i < count; i++) {
+          promises.push(getRandomWord(targetLength));
+        }
+
+        try {
+          const words = await Promise.all(promises);
+          const uniqueWords = [...new Set(words)]; // Remove duplicates
+          wordCache.get(cacheKey).push(...uniqueWords);
+          console.log(
+            `Preloaded ${uniqueWords.length} words for length ${cacheKey}`
+          );
+        } catch (error) {
+          console.warn("Failed to preload words:", error);
+        }
+      }
+
+      /**
+       * Get a random character from a character set
+       */
+      function getRandomChar(charSet) {
+        return charSet[Math.floor(Math.random() * charSet.length)];
+      }
+
+      /**
+       * Build character set based on checkbox selections
+       */
+      function buildCharacterSet(useSpaces, useSpecial, useDigits) {
+        const specialChars = "!@#$%^&*";
+        const digits = "0123456789";
+
+        let charSet = "";
+        if (useSpaces) charSet += " ";
+        if (useSpecial) charSet += specialChars;
+        if (useDigits) charSet += digits;
+
+        return charSet;
+      }
+
+      /**
+       * Generate a single password
+       */
+      async function generatePassword() {
+        const wordCount = parseInt(document.getElementById("wordCount").value);
+        const useFixedLength =
+          document.getElementById("useFixedLength").checked;
+        const wordLength = useFixedLength
+          ? parseInt(document.getElementById("wordLength").value)
+          : null;
+
+        const useSeparator = document.getElementById("useSeparator").checked;
+        const useSeparatorSpaces =
+          document.getElementById("useSeparatorSpaces").checked;
+        const useSeparatorSpecial = document.getElementById(
+          "useSeparatorSpecial"
+        ).checked;
+        const useSeparatorDigits =
+          document.getElementById("useSeparatorDigits").checked;
+
+        const useTerminator = document.getElementById("useTerminator").checked;
+        const useTerminatorSpecial = document.getElementById(
+          "useTerminatorSpecial"
+        ).checked;
+        const useTerminatorDigits = document.getElementById(
+          "useTerminatorDigits"
+        ).checked;
+
+        console.log("Generating password with:", {
+          wordCount,
+          useFixedLength,
+          wordLength,
+        });
+
+        // Get random words
+        const words = [];
+        for (let i = 0; i < wordCount; i++) {
+          const word = await getRandomWord(wordLength);
+          console.log(`Word ${i + 1}:`, word, `(length: ${word.length})`);
+          words.push(word);
+        }
+
+        let password = "";
+
+        // Build character sets
+        const separatorCharSet = useSeparator
+          ? buildCharacterSet(
+              useSeparatorSpaces,
+              useSeparatorSpecial,
+              useSeparatorDigits
+            )
+          : "";
+        const terminatorCharSet = useTerminator
+          ? buildCharacterSet(false, useTerminatorSpecial, useTerminatorDigits)
+          : "";
+
+        // Handle separators between words
+        if (useSeparator && separatorCharSet.length > 0) {
+          let separatedWords = [words[0]];
+          for (let i = 1; i < words.length; i++) {
+            separatedWords.push(getRandomChar(separatorCharSet));
+            separatedWords.push(words[i]);
+          }
+          password = separatedWords.join("");
+        } else {
+          password = words.join("");
+        }
+
+        // Handle terminator at end
+        if (useTerminator && terminatorCharSet.length > 0) {
+          password += getRandomChar(terminatorCharSet);
+        }
+
+        console.log("Generated password:", password);
+        return password;
+      }
+
+      /**
+       * Generate multiple passwords and display them
+       */
+      async function generatePasswords() {
+        const passwordCount = parseInt(
+          document.getElementById("passwordCount").value
+        );
+        const passwordList = document.getElementById("passwordList");
+        const generateBtn = document.querySelector(".generate-btn");
+
+        // Show loading state
+        passwordList.innerHTML =
+          '<div class="loading"><p>Generating passwords...</p></div>';
+        generateBtn.disabled = true;
+        generateBtn.textContent = "Generating...";
+
+        try {
+          // Preload words for better performance
+          const useFixedLength =
+            document.getElementById("useFixedLength").checked;
+          const wordLength = useFixedLength
+            ? parseInt(document.getElementById("wordLength").value)
+            : null;
+          const wordsNeeded =
+            passwordCount *
+            parseInt(document.getElementById("wordCount").value);
+
+          // Preload more words than we need to account for potential cache misses
+          await preloadWords(wordLength, Math.min(wordsNeeded + 5, 20));
+
+          // Generate passwords
+          const passwords = [];
+          for (let i = 0; i < passwordCount; i++) {
+            const password = await generatePassword();
+            passwords.push(password);
+          }
+
+          // Clear loading and display passwords
+          passwordList.innerHTML = "";
+
+          passwords.forEach((password, index) => {
+            const passwordItem = document.createElement("div");
+            passwordItem.className = "password-item";
+
+            const passwordText = document.createElement("span");
+            passwordText.className = "password-text";
+            passwordText.textContent = password;
+
+            const copyBtn = document.createElement("button");
+            copyBtn.className = "copy-btn";
+            copyBtn.textContent = "Copy";
+            copyBtn.onclick = () => copyToClipboard(password, copyBtn);
+
+            passwordItem.appendChild(passwordText);
+            passwordItem.appendChild(copyBtn);
+            passwordList.appendChild(passwordItem);
+          });
+
+          // Show API status if using fallback
+          if (!isApiWorking) {
+            showApiStatus(
+              "info",
+              "Passwords generated using offline word list"
+            );
+          }
+        } catch (error) {
+          console.error("Error generating passwords:", error);
+          passwordList.innerHTML =
+            '<div class="api-status error">Error generating passwords. Please try again.</div>';
+          showApiStatus(
+            "error",
+            "Failed to generate passwords. Please check your connection and try again."
+          );
+        } finally {
+          // Reset button state
+          generateBtn.disabled = false;
+          generateBtn.textContent = "Generate Passwords";
+        }
+      }
+
+      /**
+       * Copy text to clipboard
+       */
+      async function copyToClipboard(text, button) {
+        try {
+          await navigator.clipboard.writeText(text);
+
+          const originalText = button.textContent;
+          button.textContent = "Copied!";
+          button.classList.add("copied");
+
+          setTimeout(() => {
+            button.textContent = originalText;
+            button.classList.remove("copied");
+          }, 2000);
+        } catch (error) {
+          console.warn("Clipboard API failed, using fallback:", error);
+
+          // Fallback for older browsers or when clipboard API fails
+          const textArea = document.createElement("textarea");
+          textArea.value = text;
+          textArea.style.position = "fixed";
+          textArea.style.left = "-999999px";
+          textArea.style.top = "-999999px";
+          document.body.appendChild(textArea);
+          textArea.focus();
+          textArea.select();
+
+          try {
+            document.execCommand("copy");
+
+            const originalText = button.textContent;
+            button.textContent = "Copied!";
+            button.classList.add("copied");
+
+            setTimeout(() => {
+              button.textContent = originalText;
+              button.classList.remove("copied");
+            }, 2000);
+          } catch (fallbackError) {
+            console.error("All copy methods failed:", fallbackError);
+            button.textContent = "Copy failed";
+            setTimeout(() => {
+              button.textContent = "Copy";
+            }, 2000);
+          } finally {
+            document.body.removeChild(textArea);
+          }
+        }
+      }
+
+      /**
+       * Retry APIs after they've been marked as failing
+       */
+      async function retryApis() {
+        const retryBtn = document.querySelector(".retry-btn");
+        const originalText = retryBtn.textContent;
+
+        retryBtn.disabled = true;
+        retryBtn.textContent = "Testing...";
+
+        // Reset API state
+        isApiWorking = true;
+        apiErrorCount = 0;
+        currentApiIndex = 0;
+        wordCache.clear(); // Clear all cached words
+
+        try {
+          const testWord = await getRandomWord();
+          if (isApiWorking) {
+            const apiName = WORD_APIS[currentApiIndex].name;
+            showApiStatus(
+              "info",
+              `Reconnected to ${apiName} - Test word: "${testWord}"`
+            );
+            document.getElementById("apiRetry").style.display = "none";
+          } else {
+            showApiStatus(
+              "warning",
+              "APIs still unavailable - using offline word list"
+            );
+          }
+        } catch (error) {
+          showApiStatus("error", "Failed to reconnect to APIs");
+        } finally {
+          retryBtn.disabled = false;
+          retryBtn.textContent = originalText;
+        }
+      }
+
+      /**
+       * Show API status message
+       */
+      function showApiStatus(type, message) {
+        const statusDiv = document.getElementById("apiStatus");
+        const retryDiv = document.getElementById("apiRetry");
+
+        statusDiv.className = `api-status ${type}`;
+        statusDiv.textContent = message;
+        statusDiv.style.display = "block";
+
+        // Show retry button if APIs are failing
+        if (type === "warning" && message.includes("offline")) {
+          retryDiv.style.display = "block";
+        } else if (type === "info") {
+          retryDiv.style.display = "none";
+        }
+
+        // Auto-hide info/warning messages after 8 seconds
+        if (type === "info" || type === "warning") {
+          setTimeout(() => {
+            statusDiv.style.display = "none";
+          }, 8000);
+        }
+      }
+
+      /**
+       * Set up control event listeners
+       */
+      function setupControlListeners() {
+        // Fixed length toggle
+        document
+          .getElementById("useFixedLength")
+          .addEventListener("change", function () {
+            const wordLengthGroup = document.getElementById("wordLengthGroup");
+            wordLengthGroup.style.display = this.checked ? "flex" : "none";
+          });
+
+        // Separator toggle
+        document
+          .getElementById("useSeparator")
+          .addEventListener("change", function () {
+            const separatorOptions =
+              document.getElementById("separatorOptions");
+            separatorOptions.style.display = this.checked ? "block" : "none";
+
+            // Ensure at least one separator type is checked when separators are enabled
+            if (this.checked) {
+              ensureAtLeastOneChecked([
+                "useSeparatorSpaces",
+                "useSeparatorSpecial",
+                "useSeparatorDigits",
+              ]);
+            }
+          });
+
+        // Terminator toggle
+        document
+          .getElementById("useTerminator")
+          .addEventListener("change", function () {
+            const terminatorOptions =
+              document.getElementById("terminatorOptions");
+            terminatorOptions.style.display = this.checked ? "block" : "none";
+
+            // Ensure at least one terminator type is checked when terminators are enabled
+            if (this.checked) {
+              ensureAtLeastOneChecked([
+                "useTerminatorSpecial",
+                "useTerminatorDigits",
+              ]);
+            }
+          });
+
+        // Add listeners to separator checkboxes to ensure at least one is checked
+        [
+          "useSeparatorSpaces",
+          "useSeparatorSpecial",
+          "useSeparatorDigits",
+        ].forEach((id) => {
+          document.getElementById(id).addEventListener("change", function () {
+            ensureAtLeastOneChecked([
+              "useSeparatorSpaces",
+              "useSeparatorSpecial",
+              "useSeparatorDigits",
+            ]);
+          });
+        });
+
+        // Add listeners to terminator checkboxes to ensure at least one is checked
+        ["useTerminatorSpecial", "useTerminatorDigits"].forEach((id) => {
+          document.getElementById(id).addEventListener("change", function () {
+            ensureAtLeastOneChecked([
+              "useTerminatorSpecial",
+              "useTerminatorDigits",
+            ]);
+          });
+        });
+      }
+
+      function ensureAtLeastOneChecked(checkboxIds) {
+        const checkedCount = checkboxIds.filter(
+          (id) => document.getElementById(id).checked
+        ).length;
+
+        if (checkedCount === 0) {
+          // If none are checked, check the first one
+          document.getElementById(checkboxIds[0]).checked = true;
+        }
+      }
+
+      /**
+       * Initialize the page
+       */
+      async function initializePage() {
+        // Set up event listeners
+        setupControlListeners();
+
+        // Test APIs on page load with a reasonable word length
+        try {
+          const testWord = await getRandomWord(5); // Test with 5-character word
+          if (isApiWorking) {
+            const apiName = WORD_APIS[currentApiIndex].name;
+            showApiStatus(
+              "info",
+              `Connected to ${apiName} - Test word: "${testWord}" (${testWord.length} chars)`
+            );
+          } else {
+            showApiStatus(
+              "warning",
+              `Using offline word list - Test word: "${testWord}" (${testWord.length} chars)`
+            );
+          }
+        } catch (error) {
+          console.warn("Failed to test APIs:", error);
+          showApiStatus(
+            "warning",
+            "Using offline word list - All APIs unavailable"
+          );
+        }
+
+        // Generate initial passwords
+        generatePasswords();
+      }
+
+      // Run initialization when page loads
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", initializePage);
+      } else {
+        initializePage();
+      }
+    </script>
+  </body>
 </html>

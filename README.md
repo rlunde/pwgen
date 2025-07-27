@@ -18,17 +18,16 @@ Meanwhile, passwords like `correct horse battery staple` are:
 ## The Solution
 
 This generator creates memorable passwords using:
-- **2-5 common English words** (no confusing capitalization to forget)
-- **Optional separators** between words (digits or special characters)
+- **common lowercaseEnglish words** (no confusing capitalization to forget)
+- **Optional separators** between words (spaces,digits or special characters)
 - **Optional terminators** at the end for extra security
 - **Multiple choices** so you can pick one that feels right
 
 ### Features
 
-- 🎯 **Memory-optimized**: No uppercase letters to forget
+- 🎯 **Memory-optimized**: No mixed lowercase and uppercase letters to forget
 - 🔧 **Flexible controls**: Adjust word count, separators, and character types
 - 📱 **Easy copying**: One-click copy buttons for each password
-- 🎨 **Clean interface**: Simple, modern design
 - 📊 **Multiple options**: Generate 3-10 passwords at once
 
 ## How to Use
@@ -37,7 +36,7 @@ This generator creates memorable passwords using:
 2. Adjust settings:
    - **Number of words**: 2-5 words (more words = more security)
    - **Number of passwords**: How many options to generate
-   - **Separators**: Add characters between words
+   - **Separators**: Add characters or spacesbetween words
    - **Terminators**: Add characters at the end
    - **Character types**: Include digits (0-9) and/or special characters (!@#$%^&*)
 3. Click "Generate Passwords"
@@ -56,9 +55,6 @@ With different settings, you might get:
 ⚠️ **Important Disclaimers:**
 
 - **For casual use only**: This tool is designed for guest WiFi passwords, non-critical mobile apps, and other non-critical applications
-- **Not cryptographically secure**: Uses JavaScript's `Math.random()` which is not suitable for high-security applications
-- **No guarantees**: This is a personal project without formal security review
-- **Demonstration only**: Not suitable for production use! Even if you decide to use this yourself for your own stuff, **CHANGE THE WORDLIST**. I don't use this myself, for obvious reasons.
 - **Local only**: Runs entirely in your browser - no passwords are sent anywhere
 
 **For important accounts** (banking, email, etc.), use:
@@ -68,15 +64,10 @@ With different settings, you might get:
 
 ## Technical Details
 
-- **Wordlist**: 404 common English words
-- **Randomness**: JavaScript `Math.random()` (sufficient for casual use)
-- **No dependencies**: Pure HTML/CSS/JavaScript
-- **Offline capable**: Works without internet connection
+- **Offline capable**: Works without internet connection (with a VERY limited word list)
 
 ## Remaining TODO
 
-- Convert to a Hugo page for my website (ronlunde.com)
-- Add link to original XKCD comic
 - Link to educational resources about password security
 
 ## Inspiration
